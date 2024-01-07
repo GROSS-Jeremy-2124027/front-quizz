@@ -1,16 +1,31 @@
 import { Box, Typography } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import Button from "../components/Button";
 import SelectInput from "../components/SelectInput";
-import { useSpring, animated } from 'react-spring'
+import { useSpring, animated } from 'react-spring';
+import axios from 'axios';
 
 const Difficulty = () => {
+    const [selectedDifficulty, setSelectedDifficulty] = useState("easy");
+
     const animation = useSpring({
         from: { y: 1000 },
         to: { y: 0 },
         opacity: 1,
         config: { tension: 220, friction: 20 }
     });
+
+    const handleGetStartedClick = async () => {
+        try {
+            const response = await axios.put('http://127.0.0.1:8000/game/update-game/9/', {
+                difficulty: selectedDifficulty
+            });
+
+            console.log(response.data);
+        } catch (error) {
+            console.error('Error creating/modifying game:', error);
+        }
+    };
 
     return (
         <Box sx={{
@@ -46,8 +61,11 @@ const Difficulty = () => {
                 }}>
                     Choose difficulty
                 </Typography>
-                <SelectInput />
-                <Box>
+                <SelectInput
+                    selectedDifficulty={selectedDifficulty}
+                    onChange={(e) => setSelectedDifficulty(e.target.value)}
+                />
+                <Box onClick={handleGetStartedClick}>
                     <Button label={"Get Started"} url={"explaination"} />
                 </Box>
             </animated.div>

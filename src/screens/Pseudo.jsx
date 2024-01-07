@@ -1,15 +1,30 @@
 import { Box, Typography, TextField } from "@mui/material";
-import React from "react";
-import Button from "../components/Button";
+import React, { useState } from "react"; import Button from "../components/Button";
 import { useSpring, animated } from 'react-spring'
+import axios from 'axios';
 
 const Pseudo = () => {
+    const [pseudo, setPseudo] = useState("");
+
     const animation = useSpring({
         from: { y: 1000 },
         to: { y: 0 },
         opacity: 1,
         config: { tension: 220, friction: 20 }
     });
+
+    const handleNextClick = async () => {
+        try {
+            // TODO : modifier la bonne game
+            const response = await axios.put('http://127.0.0.1:8000/game/update-game/9/', {
+                player_name: pseudo
+            });
+
+            console.log(response.data);
+        } catch (error) {
+            console.error('Error modifying game:', error);
+        }
+    };
 
     return (
         <Box sx={{
@@ -45,8 +60,14 @@ const Pseudo = () => {
                 }}>
                     Enter your pseudo
                 </Typography>
-                <TextField id="outlined-basic" label="Pseudo" variant="outlined" />
-                <Box>
+                <TextField
+                    id="outlined-basic"
+                    label="Pseudo"
+                    variant="outlined"
+                    value={pseudo}
+                    onChange={(e) => setPseudo(e.target.value)}  // Met à jour l'état du pseudo
+                />
+                <Box onClick={handleNextClick}>
                     <Button label={"Difficulty"} url={"difficulty"} />
                 </Box>
             </animated.div>

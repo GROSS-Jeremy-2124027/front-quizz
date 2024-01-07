@@ -1,7 +1,8 @@
 import { Box, Typography } from "@mui/material";
 import React from "react";
 import Button from "../components/Button";
-import { useSpring, animated } from 'react-spring'
+import { useSpring, animated } from 'react-spring';
+import axios from 'axios';
 
 const HomePage = () => {
     const animation = useSpring({
@@ -10,6 +11,16 @@ const HomePage = () => {
         opacity: 1,
         config: { tension: 220, friction: 20 }
     });
+
+    const handleStartNowClick = async () => {
+        try {
+            const response = await axios.post('http://127.0.0.1:8000/game/create-game/', {});
+
+            console.log(response.data);
+        } catch (error) {
+            console.error('Error creating/modifying game:', error);
+        }
+    };
 
     return (
         <Box sx={{
@@ -56,7 +67,7 @@ const HomePage = () => {
                 }}>
                     Quizz Game
                 </Typography>
-                <Box>
+                <Box onClick={handleStartNowClick}>
                     <Button label={"Start Now"} url={"pseudo"} />
                 </Box>
             </animated.div>

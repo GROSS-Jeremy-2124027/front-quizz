@@ -1,4 +1,6 @@
-const SelectInput = () => {
+import React from "react";
+
+const SelectInput = ({ selectedDifficulty, onChange }) => {
     return (
         <select
             style={{
@@ -10,7 +12,10 @@ const SelectInput = () => {
                 fontSize: "1em",
             }}
             name="difficulty"
-            id="difficulty">
+            id="difficulty"
+            value={selectedDifficulty}
+            onChange={onChange}
+        >
             <option value="easy"> Easy </option>
             <option value="medium"> Medium </option>
             <option value="hard"> Hard </option>
