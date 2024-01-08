@@ -19,7 +19,7 @@ const Category = () => {
 
     const handleQuitGameClick = async () => {
         try {
-            const response = await axios.delete('http://127.0.0.1:8000/game/delete-game/11/', {});
+            const response = await axios.delete('http://127.0.0.1:8000/game/delete-game/1/', {});
 
             console.log(response.data);
         } catch (error) {

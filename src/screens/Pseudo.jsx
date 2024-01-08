@@ -1,9 +1,24 @@
 import { Box, Typography, TextField } from "@mui/material";
-import React, { useState } from "react"; import Button from "../components/Button";
+import React, { useState, useEffect } from "react"; import Button from "../components/Button";
 import { useSpring, animated } from 'react-spring'
 import axios from 'axios';
 
 const Pseudo = () => {
+    useEffect(() => {
+        const getCookie = (name) => {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        };
+
+        const gameId = getCookie('game_id');
+        console.log('Game ID from cookie:', gameId);
+
+        if (!gameId) {
+            console.log('Game ID not found in cookie');
+        }
+    }, []);
+
     const [pseudo, setPseudo] = useState("");
 
     const animation = useSpring({
@@ -16,7 +31,7 @@ const Pseudo = () => {
     const handleNextClick = async () => {
         try {
             // TODO : modifier la bonne game
-            const response = await axios.put('http://127.0.0.1:8000/game/update-game/9/', {
+            const response = await axios.put('http://127.0.0.1:8000/game/update-game/1', {
                 player_name: pseudo
             });
 

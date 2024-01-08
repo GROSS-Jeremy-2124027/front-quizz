@@ -7,6 +7,8 @@ import axios from 'axios';
 
 const Difficulty = () => {
     const [selectedDifficulty, setSelectedDifficulty] = useState("easy");
+    const gameId = document.cookie.replace(/(?:(?:^|.*;\s*)game_id\s*=\s*([^;]*).*$)|^.*$/, "$1");
+    console.log('Game ID from cookie:', gameId);
 
     const animation = useSpring({
         from: { y: 1000 },
@@ -17,7 +19,7 @@ const Difficulty = () => {
 
     const handleGetStartedClick = async () => {
         try {
-            const response = await axios.put('http://127.0.0.1:8000/game/update-game/9/', {
+            const response = await axios.put('http://127.0.0.1:8000/game/update-game/1/', {
                 difficulty: selectedDifficulty
             });
 
