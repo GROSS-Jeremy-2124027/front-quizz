@@ -1,10 +1,12 @@
 import React from 'react';
 import { Box, Typography } from "@mui/material";
-import { useNavigate } from 'react-router-dom';
 
 
-const Button = ({ label, url }) => {
-    const navigate = useNavigate()
+const QuitButton = ({ label, handleOpen }) => {
+
+    const handleClick = () => {
+        handleOpen();
+    };
 
     return (
         <Box
@@ -21,11 +23,10 @@ const Button = ({ label, url }) => {
                     cursor: "pointer"
                 }
             }}
-            onClick={() => navigate(`/${url}`)}
+            onClick={handleClick}
         >
             <Typography sx={{
                 fontFamily: "Archivo Black, sans-serif",
-                textAlign: "center",
                 fontSize: "1.5em",
                 textTransform: "uppercase",
             }}>
@@ -35,4 +36,4 @@ const Button = ({ label, url }) => {
     )
 }
 
-export default Button;
+export default QuitButton;

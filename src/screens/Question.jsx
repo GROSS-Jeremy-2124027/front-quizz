@@ -1,15 +1,28 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography, Modal } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import Button from "../components/Button";
+import QuitButton from "../components/QuitButton";
 import { useSpring, animated } from 'react-spring'
 import Answer from "../components/Answer";
+import axios from 'axios';
 
 const Question = () => {
     const [answerClicked, setAnswerClicked] = useState(false);
     const [countdown, setCountdown] = useState(8);
+    const [open, setOpen] = React.useState(false);
 
     const handleAnswerClick = () => {
         setAnswerClicked(true);
+    };
+
+    const handleQuitGameClick = async () => {
+        try {
+            const response = await axios.delete('http://127.0.0.1:8000/game/delete-game/11/', {});
+
+            console.log(response.data);
+        } catch (error) {
+            console.error('Error deleting game:', error);
+        }
     };
 
     const animation = useSpring({
@@ -31,6 +44,10 @@ const Question = () => {
         return () => clearInterval(timer);
     }, [countdown]);
 
+    const handleOpen = () => setOpen(true);
+
+    const handleClose = () => setOpen(false);
+
     return (
         <Box sx={{
             position: "absolute",
@@ -48,7 +65,7 @@ const Question = () => {
             <Box sx={{
                 position: "absolute",
             }}>
-                <Button label={"Quit Game"} url={""} />
+                <QuitButton label={"Quit Game"} handleOpen={handleOpen} />
             </Box>
             <Box sx={{
                 position: "absolute",
@@ -96,6 +113,39 @@ const Question = () => {
                     </Grid>
                 </Grid>
             </animated.div>
+            <Modal
+                sx={{
+                    border: "none",
+                    width: "100vw",
+                    height: "100vh",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "rgba(0, 0, 0, 0.2)"
+                }}
+                open={open}
+                onClose={handleClose}>
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        padding: "20px",
+                        backgroundColor: "#91F5AD"
+                    }}>
+                    <Typography sx={{
+                        fontFamily: "Archivo Black, sans-serif",
+                        fontSize: "1em",
+                    }}>
+                        Are you sure you want to leave the game ?
+                    </Typography>
+                    <Box onClick={handleQuitGameClick}>
+                        <Button label={"Quit Game"} url={""} />
+                    </Box>
+                </Box>
+            </Modal>
         </Box>
     );
 }

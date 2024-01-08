@@ -23,7 +23,7 @@ const Difficulty = () => {
 
             console.log(response.data);
         } catch (error) {
-            console.error('Error creating/modifying game:', error);
+            console.error('Error modifying game:', error);
         }
     };
 
