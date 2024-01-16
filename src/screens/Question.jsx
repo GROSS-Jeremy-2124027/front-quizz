@@ -10,6 +10,30 @@ const Question = () => {
     const [answerClicked, setAnswerClicked] = useState(false);
     const [countdown, setCountdown] = useState(8);
     const [open, setOpen] = React.useState(false);
+    const [currentQuestion, setCurrentQuestion] = useState(null);
+
+    useEffect(() => {
+        // Chargez la première question non répondue lorsque le composant est monté
+        const loadFirstUnansweredQuestion = async () => {
+            try {
+                const response = await axios.get(
+                    "http://127.0.0.1:8000/game/first-unanswered-question/"
+                );
+
+                console.log(response.data)
+
+                if (response.data) {
+                    setCurrentQuestion(response.data.question_text);
+                } else {
+                    // Gérer le cas où aucune question non répondue n'est trouvée
+                }
+            } catch (error) {
+                console.error("Error loading first unanswered question:", error);
+            }
+        };
+
+        loadFirstUnansweredQuestion();
+    }, []);
 
     const handleAnswerClick = () => {
         setAnswerClicked(true);
@@ -96,7 +120,7 @@ const Question = () => {
                     textTransform: "uppercase",
                     margin: "0 10vw"
                 }}>
-                    How much Rafael Nadal has won Rolland Garros ?
+                    {currentQuestion}
                 </Typography>
                 <Grid container rowSpacing={1} justifyContent="center">
                     <Grid item xs={4} sx={{ margin: '10px' }}>

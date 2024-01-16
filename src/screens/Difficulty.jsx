@@ -7,8 +7,6 @@ import axios from 'axios';
 
 const Difficulty = () => {
     const [selectedDifficulty, setSelectedDifficulty] = useState("easy");
-    const gameId = document.cookie.replace(/(?:(?:^|.*;\s*)game_id\s*=\s*([^;]*).*$)|^.*$/, "$1");
-    console.log('Game ID from cookie:', gameId);
 
     const animation = useSpring({
         from: { y: 1000 },

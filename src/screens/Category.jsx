@@ -12,14 +12,30 @@ const Category = () => {
     const [jokerClicked, setJokerClicked] = useState(false);
     const [countdown, setCountdown] = useState(8);
     const [open, setOpen] = React.useState(false);
+    const [jokersAvailable, setJokersAvailable] = useState(0);
 
-    const handleJokerClick = () => {
-        setJokerClicked(true);
+    const handleJokerClick = async () => {
+        try {
+            const gameResponse = await axios.get('http://127.0.0.1:8000/game/get-game/1/');
+            const playerId = gameResponse.data.player_id;
+
+            const jokersResponse = await axios.get(`http://127.0.0.1:8000/player/get-player/${playerId}/`);
+            const availableJokers = jokersResponse.data.joker;
+
+            if (availableJokers > 0) {
+                const jokerResponse = await axios.put(`http://127.0.0.1:8000/player/use-joker/${playerId}/`);
+                console.log(jokerResponse.data);
+
+                setJokerClicked(true);
+            }
+        } catch (error) {
+            console.error('Error using joker:', error);
+        }
     };
 
     const handleQuitGameClick = async () => {
         try {
-            const response = await axios.delete('http://127.0.0.1:8000/game/delete-game/1/', {});
+            const response = await axios.delete('http://127.0.0.1:8000/game/delete-game/', {});
 
             console.log(response.data);
         } catch (error) {
@@ -32,12 +48,31 @@ const Category = () => {
             setCountdown((prevCount) => prevCount - 1);
         }, 1000);
 
-        // if (countdown === 0) {
-        //     navigate('/question');
-        // }
+        if (countdown === 0) {
+            navigate('/question');
+        }
 
         return () => clearInterval(timer);
     }, [countdown]);
+
+    useEffect(() => {
+        // Call API to get the number of available Jokers for the player
+        const fetchJokers = async () => {
+            try {
+                const gameResponse = await axios.get('http://127.0.0.1:8000/game/get-game/1/');
+                const playerId = gameResponse.data.player_id;
+
+                const jokersResponse = await axios.get(`http://127.0.0.1:8000/player/get-player/${playerId}/`);
+                const availableJokers = jokersResponse.data.joker;
+
+                setJokersAvailable(availableJokers);
+            } catch (error) {
+                console.error('Error fetching available Jokers:', error);
+            }
+        };
+
+        fetchJokers();
+    }, []);
 
     const animation = useSpring({
         from: { y: 1000 },
@@ -110,7 +145,8 @@ const Category = () => {
                     Sports
                 </Typography>
                 <Box sx={{
-                    position: "relative"
+                    position: "relative",
+                    display: jokersAvailable > 0 ? 'block' : 'none',
                 }}>
                     <Joker onJokerClick={handleJokerClick} />
                 </Box>

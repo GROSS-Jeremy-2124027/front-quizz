@@ -14,6 +14,8 @@ const HomePage = () => {
 
     const handleStartNowClick = async () => {
         try {
+            await axios.delete('http://127.0.0.1:8000/game/delete-game/', {});
+            await axios.delete('http://127.0.0.1:8000/player/delete-all-players/', {});
             const response = await axios.post('http://127.0.0.1:8000/game/create-game/', {});
 
             console.log(response.data);
