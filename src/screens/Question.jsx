@@ -5,12 +5,24 @@ import QuitButton from "../components/QuitButton";
 import { useSpring, animated } from 'react-spring'
 import Answer from "../components/Answer";
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 const Question = () => {
-    const [answerClicked, setAnswerClicked] = useState(false);
-    const [countdown, setCountdown] = useState(8);
-    const [open, setOpen] = React.useState(false);
-    const [currentQuestion, setCurrentQuestion] = useState(null);
+    const [answerClicked, setAnswerClicked] = useState(false)
+    const [countdown, setCountdown] = useState(8)
+    const [open, setOpen] = useState(false)
+    const [currentQuestion, setCurrentQuestion] = useState(null)
+    const [choicesData, setChoicesData] = useState([])
+    const [userChoice, setUserChoice] = useState(null)
+    const [userId, setUserId] = useState()
+
+    const [goodAnswer, setGoodAnswer] = useState(false)
+    const [badAnswer, setBadAnswer] = useState(false)
+    const [noAnswer, setNoAnswer] = useState(false)
+
+    const [showCountDown, setShowCountDown] = useState(true)
+
+    const navigate = useNavigate()
 
     useEffect(() => {
         // Chargez la première question non répondue lorsque le composant est monté
@@ -20,32 +32,39 @@ const Question = () => {
                     "http://127.0.0.1:8000/game/first-unanswered-question/"
                 );
 
+                const player = await axios.get(
+                    "http://127.0.0.1:8000/game/get-game/1/"
+                )
+
                 console.log(response.data)
 
                 if (response.data) {
-                    setCurrentQuestion(response.data.question_text);
+                    setCurrentQuestion(response.data.question_text)
+                    setChoicesData(response.data.choices)
+                    setUserId(player.data.player_id)
                 } else {
                     // Gérer le cas où aucune question non répondue n'est trouvée
                 }
             } catch (error) {
-                console.error("Error loading first unanswered question:", error);
+                console.error("Error loading first unanswered question or player id:", error)
             }
         };
 
-        loadFirstUnansweredQuestion();
+        loadFirstUnansweredQuestion()
     }, []);
 
-    const handleAnswerClick = () => {
-        setAnswerClicked(true);
+    const handleAnswerClick = (value) => {
+        setAnswerClicked(true)
+        setUserChoice(value)
     };
 
     const handleQuitGameClick = async () => {
         try {
-            const response = await axios.delete('http://127.0.0.1:8000/game/delete-game/1/', {});
+            const response = await axios.delete('http://127.0.0.1:8000/game/delete-game/', {})
 
-            console.log(response.data);
+            console.log(response.data)
         } catch (error) {
-            console.error('Error deleting game:', error);
+            console.error('Error deleting game:', error)
         }
     };
 
@@ -58,19 +77,55 @@ const Question = () => {
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setCountdown((prevCount) => prevCount - 1);
+            setCountdown((prevCount) => prevCount - 1)
         }, 1000);
 
         if (countdown === 0) {
-
+            // Cache le timer
+            setShowCountDown(false)
+            // Mettre la question a is_answered = true
+            const setQuestionAnswered = async () => {
+                const response = await axios.put(
+                    "http://127.0.0.1:8000/game/set-question-answered/"
+                );
+                console.log(response.data)
+            }
+            setQuestionAnswered()
+            // Si bonne réponse
+            if (userChoice == true) {
+                // Affichage du message de bonne réponse
+                setGoodAnswer(true)
+                // Augmenter le score du joueur
+                const increaseScore = async () => {
+                    const response = await axios.put(
+                        `http://127.0.0.1:8000/player/increase-score/${userId}/`
+                    );
+                    console.log(response.data)
+                }
+                increaseScore()
+                setTimeout(() => {
+                    // window.location.reload();
+                }, 5000)
+            } if (userChoice == null) {
+                setAnswerClicked(true)
+                setNoAnswer(true)
+                setTimeout(() => {
+                    // window.location.reload();
+                }, 5000)
+            } else {
+                setBadAnswer(true)
+                setTimeout(() => {
+                    // window.location.reload();
+                }, 5000)
+            }
         }
 
-        return () => clearInterval(timer);
+        return () => clearInterval(timer)
     }, [countdown]);
 
-    const handleOpen = () => setOpen(true);
+    const handleOpen = () => setOpen(true)
 
-    const handleClose = () => setOpen(false);
+    const handleClose = () => setOpen(false)
 
     return (
         <Box sx={{
@@ -95,15 +150,17 @@ const Question = () => {
                 position: "absolute",
                 right: "0"
             }}>
-                <Typography sx={{
-                    fontFamily: "Archivo Black, sans-serif",
-                    fontSize: "3em",
-                    textTransform: "uppercase",
-                    margin: "20px",
-                    padding: "10px",
-                }}>
-                    {countdown} s
-                </Typography>
+                {showCountDown && (
+                    <Typography sx={{
+                        fontFamily: "Archivo Black, sans-serif",
+                        fontSize: "3em",
+                        textTransform: "uppercase",
+                        margin: "20px",
+                        padding: "10px",
+                    }}>
+                        {countdown} s
+                    </Typography>
+                )}
             </Box>
             <animated.div style={{
                 ...animation,
@@ -123,19 +180,67 @@ const Question = () => {
                     {currentQuestion}
                 </Typography>
                 <Grid container rowSpacing={1} justifyContent="center">
-                    <Grid item xs={4} sx={{ margin: '10px' }}>
-                        <Answer label={"5"} onClick={handleAnswerClick} disabled={answerClicked} />
-                    </Grid>
-                    <Grid item xs={4} sx={{ margin: '10px' }}>
-                        <Answer label={"8"} onClick={handleAnswerClick} disabled={answerClicked} />
-                    </Grid>
-                    <Grid item xs={4} sx={{ margin: '10px' }}>
-                        <Answer label={"12"} onClick={handleAnswerClick} disabled={answerClicked} />
-                    </Grid>
-                    <Grid item xs={4} sx={{ margin: '10px' }}>
-                        <Answer label={"14"} onClick={handleAnswerClick} disabled={answerClicked} />
-                    </Grid>
+                    {choicesData.map((choice, index) => (
+                        <Grid key={index} item xs={4} sx={{ margin: '10px' }}>
+                            <Answer
+                                label={choice.choice_text}
+                                onClick={() => handleAnswerClick(choice.is_correct)}
+                                disabled={answerClicked}
+                            />
+                        </Grid>
+                    ))}
                 </Grid>
+                {goodAnswer && (
+                    <Box sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        textAlign: "center",
+                    }}>
+                        <Typography sx={{
+                            fontFamily: "Archivo Black, sans-serif",
+                            fontSize: "2em",
+                            color: "#FF934F"
+                        }}>
+                            Good Answer !
+                        </Typography>
+                    </Box>
+                )}
+                {badAnswer && (
+                    <Box sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        textAlign: "center",
+                    }}>
+                        <Typography sx={{
+                            fontFamily: "Archivo Black, sans-serif",
+                            fontSize: "2em",
+                            color: "#FF934F"
+                        }}>
+                            Bad Answer ...
+                        </Typography>
+                    </Box>
+                )}
+                {noAnswer && (
+                    <Box sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        textAlign: "center",
+                    }}>
+                        <Typography sx={{
+                            fontFamily: "Archivo Black, sans-serif",
+                            fontSize: "2em",
+                            color: "#FF934F"
+                        }}>
+                            Bah alors bouffon faut répondre ;)
+                        </Typography>
+                    </Box>
+                )}
             </animated.div>
             <Modal
                 sx={{
