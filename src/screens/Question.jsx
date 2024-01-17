@@ -49,9 +49,19 @@ const Question = () => {
                 console.error("Error loading first unanswered question or player id:", error)
             }
         };
-
+        const shuffledChoices = shuffleArray(choicesData);
+        setChoicesData(shuffledChoices);
         loadFirstUnansweredQuestion()
     }, []);
+
+    const shuffleArray = (array) => {
+        const shuffledArray = [...array];
+        for (let i = shuffledArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+        }
+        return shuffledArray;
+    };
 
     const handleAnswerClick = (value) => {
         setAnswerClicked(true)
@@ -112,7 +122,7 @@ const Question = () => {
                 setTimeout(() => {
                     // window.location.reload();
                 }, 5000)
-            } else {
+            } if (userChoice == false) {
                 setBadAnswer(true)
                 setTimeout(() => {
                     // window.location.reload();
