@@ -8,6 +8,7 @@ import Button from "../components/Button";
 import axios from 'axios';
 
 const Category = () => {
+    const api_url = "https://web-production-1142.up.railway.app"
     const navigate = useNavigate()
     const [jokerClicked, setJokerClicked] = useState(false)
     const [countdown, setCountdown] = useState(8)
@@ -16,14 +17,14 @@ const Category = () => {
 
     const handleJokerClick = async () => {
         try {
-            const gameResponse = await axios.get('http://127.0.0.1:8000/game/get-game/1/')
+            const gameResponse = await axios.get(`${api_url}/game/get-game/1/`)
             const playerId = gameResponse.data.player_id
 
-            const jokersResponse = await axios.get(`http://127.0.0.1:8000/player/get-player/${playerId}/`)
+            const jokersResponse = await axios.get(`${api_url}/player/get-player/${playerId}/`)
             const availableJokers = jokersResponse.data.joker
 
             if (availableJokers > 0) {
-                const jokerResponse = await axios.put(`http://127.0.0.1:8000/player/use-joker/${playerId}/`)
+                const jokerResponse = await axios.put(`${api_url}/player/use-joker/${playerId}/`)
                 console.log(jokerResponse.data)
 
                 setJokerClicked(true)
@@ -35,7 +36,7 @@ const Category = () => {
 
     const handleQuitGameClick = async () => {
         try {
-            const response = await axios.delete('http://127.0.0.1:8000/game/delete-game/', {})
+            const response = await axios.delete(`${api_url}/game/delete-game/`, {})
 
             console.log(response.data)
         } catch (error) {
@@ -59,10 +60,10 @@ const Category = () => {
         // Call API to get the number of available Jokers for the player
         const fetchJokers = async () => {
             try {
-                const gameResponse = await axios.get('http://127.0.0.1:8000/game/get-game/1/')
+                const gameResponse = await axios.get(`${api_url}/game/get-game/1/`)
                 const playerId = gameResponse.data.player_id
 
-                const jokersResponse = await axios.get(`http://127.0.0.1:8000/player/get-player/${playerId}/`)
+                const jokersResponse = await axios.get(`${api_url}/player/get-player/${playerId}/`)
                 const availableJokers = jokersResponse.data.joker
 
                 setJokersAvailable(availableJokers)

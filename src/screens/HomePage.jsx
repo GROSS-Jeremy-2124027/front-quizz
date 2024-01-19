@@ -5,6 +5,7 @@ import { useSpring, animated } from 'react-spring';
 import axios from 'axios';
 
 const HomePage = () => {
+    const api_url = "https://web-production-1142.up.railway.app"
     const animation = useSpring({
         from: { y: 1000 },
         to: { y: 0 },
@@ -14,9 +15,9 @@ const HomePage = () => {
 
     const handleStartNowClick = async () => {
         try {
-            await axios.delete('http://127.0.0.1:8000/game/delete-game/', {});
-            await axios.delete('http://127.0.0.1:8000/player/delete-all-players/', {});
-            const response = await axios.post('http://127.0.0.1:8000/game/create-game/', {});
+            await axios.delete(`${api_url}/game/delete-game/`, {});
+            await axios.delete(`${api_url}/player/delete-all-players/`, {});
+            const response = await axios.post(`${api_url}/game/create-game/`, {});
 
             console.log(response.data);
         } catch (error) {

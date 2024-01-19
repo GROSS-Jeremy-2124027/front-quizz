@@ -5,9 +5,9 @@ import QuitButton from "../components/QuitButton";
 import { useSpring, animated } from 'react-spring'
 import Answer from "../components/Answer";
 import axios from 'axios';
-import { useNavigate } from "react-router-dom";
 
 const Question = () => {
+    const api_url = "https://web-production-1142.up.railway.app"
     const [answerClicked, setAnswerClicked] = useState(false)
     const [countdown, setCountdown] = useState(8)
     const [open, setOpen] = useState(false)
@@ -22,18 +22,16 @@ const Question = () => {
 
     const [showCountDown, setShowCountDown] = useState(true)
 
-    const navigate = useNavigate()
-
     useEffect(() => {
         // Chargez la première question non répondue lorsque le composant est monté
         const loadFirstUnansweredQuestion = async () => {
             try {
                 const response = await axios.get(
-                    "http://127.0.0.1:8000/game/first-unanswered-question/"
+                    `${api_url}/game/first-unanswered-question/`
                 );
 
                 const player = await axios.get(
-                    "http://127.0.0.1:8000/game/get-game/1/"
+                    `${api_url}/game/get-game/1/`
                 )
 
                 console.log(response.data)
@@ -70,7 +68,7 @@ const Question = () => {
 
     const handleQuitGameClick = async () => {
         try {
-            const response = await axios.delete('http://127.0.0.1:8000/game/delete-game/', {})
+            const response = await axios.delete(`${api_url}/game/delete-game/`, {})
 
             console.log(response.data)
         } catch (error) {
@@ -96,7 +94,7 @@ const Question = () => {
             // Mettre la question a is_answered = true
             const setQuestionAnswered = async () => {
                 const response = await axios.put(
-                    "http://127.0.0.1:8000/game/set-question-answered/"
+                    `${api_url}/game/set-question-answered/`
                 );
                 console.log(response.data)
             }
@@ -108,7 +106,7 @@ const Question = () => {
                 // Augmenter le score du joueur
                 const increaseScore = async () => {
                     const response = await axios.put(
-                        `http://127.0.0.1:8000/player/increase-score/${userId}/`
+                        `${api_url}/player/increase-score/${userId}/`
                     );
                     console.log(response.data)
                 }

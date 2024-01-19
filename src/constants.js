@@ -1,0 +1,1 @@
+const api_url = "https://web-production-1142.up.railway.app"

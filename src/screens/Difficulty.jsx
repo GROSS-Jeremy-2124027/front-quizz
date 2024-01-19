@@ -6,6 +6,7 @@ import { useSpring, animated } from 'react-spring';
 import axios from 'axios';
 
 const Difficulty = () => {
+    const api_url = "https://web-production-1142.up.railway.app"
     const [selectedDifficulty, setSelectedDifficulty] = useState("easy");
 
     const animation = useSpring({
@@ -17,7 +18,7 @@ const Difficulty = () => {
 
     const handleGetStartedClick = async () => {
         try {
-            const response = await axios.put('http://127.0.0.1:8000/game/update-game/1/', {
+            const response = await axios.put(`${api_url}/game/update-game/1/`, {
                 difficulty: selectedDifficulty
             });
 
