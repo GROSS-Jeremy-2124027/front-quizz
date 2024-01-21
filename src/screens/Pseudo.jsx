@@ -1,10 +1,10 @@
 import { Box, Typography, TextField } from "@mui/material";
-import React, { useState, useEffect } from "react"; import Button from "../components/Button";
+import React, { useState } from "react"; import Button from "../components/Button";
 import { useSpring, animated } from 'react-spring'
 import axios from 'axios';
-import api_url from "../constants";
 
 const Pseudo = () => {
+    const local_url = "http://127.0.0.1:8000"
     const api_url = "https://web-production-1142.up.railway.app"
     const [pseudo, setPseudo] = useState("");
 
@@ -17,8 +17,7 @@ const Pseudo = () => {
 
     const handleNextClick = async () => {
         try {
-            // TODO : modifier la bonne game
-            const response = await axios.put(`${api_url}/game/update-game/1/`, {
+            const response = await axios.put(`${local_url}/game/update-game/1/`, {
                 player_name: pseudo
             });
 
@@ -67,7 +66,7 @@ const Pseudo = () => {
                     label="Pseudo"
                     variant="outlined"
                     value={pseudo}
-                    onChange={(e) => setPseudo(e.target.value)}  // Met à jour l'état du pseudo
+                    onChange={(e) => setPseudo(e.target.value)}
                 />
                 <Box onClick={handleNextClick}>
                     <Button label={"Difficulty"} url={"difficulty"} />

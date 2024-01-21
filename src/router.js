@@ -6,6 +6,7 @@ import Explaination from "./screens/Explaination"
 import Language from "./screens/Language"
 import Category from "./screens/Category"
 import Question from "./screens/Question"
+import Score from "./screens/Score"
 
 const Routes = () => {
     const publicRoutes = [
@@ -61,6 +62,13 @@ const Routes = () => {
         {
             path: '/question',
             element: <Question />
+        },
+        /*---------------------------------*/
+        /*-------------- Score ------------*/
+        /*---------------------------------*/
+        {
+            path: '/score',
+            element: <Score />
         },
     ]
     const router = createBrowserRouter([

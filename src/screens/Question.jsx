@@ -5,16 +5,21 @@ import QuitButton from "../components/QuitButton";
 import { useSpring, animated } from 'react-spring'
 import Answer from "../components/Answer";
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 const Question = () => {
+    const local_url = "http://127.0.0.1:8000"
     const api_url = "https://web-production-1142.up.railway.app"
+    const navigate = useNavigate()
+
     const [answerClicked, setAnswerClicked] = useState(false)
-    const [countdown, setCountdown] = useState(8)
+    const [countdown, setCountdown] = useState(12)
     const [open, setOpen] = useState(false)
     const [currentQuestion, setCurrentQuestion] = useState(null)
     const [choicesData, setChoicesData] = useState([])
     const [userChoice, setUserChoice] = useState(null)
     const [userId, setUserId] = useState()
+    const [userName, setUserName] = useState(null)
 
     const [goodAnswer, setGoodAnswer] = useState(false)
     const [badAnswer, setBadAnswer] = useState(false)
@@ -23,15 +28,14 @@ const Question = () => {
     const [showCountDown, setShowCountDown] = useState(true)
 
     useEffect(() => {
-        // Chargez la première question non répondue lorsque le composant est monté
         const loadFirstUnansweredQuestion = async () => {
             try {
                 const response = await axios.get(
-                    `${api_url}/game/first-unanswered-question/`
+                    `${local_url}/game/first-unanswered-question/`
                 );
 
                 const player = await axios.get(
-                    `${api_url}/game/get-game/1/`
+                    `${local_url}/game/get-game/1/`
                 )
 
                 console.log(response.data)
@@ -40,17 +44,34 @@ const Question = () => {
                     setCurrentQuestion(response.data.question_text)
                     setChoicesData(response.data.choices)
                     setUserId(player.data.player_id)
-                } else {
-                    // Gérer le cas où aucune question non répondue n'est trouvée
                 }
             } catch (error) {
                 console.error("Error loading first unanswered question or player id:", error)
             }
         };
-        const shuffledChoices = shuffleArray(choicesData);
-        setChoicesData(shuffledChoices);
+        const shuffledChoices = shuffleArray(choicesData)
+        setChoicesData(shuffledChoices)
         loadFirstUnansweredQuestion()
     }, []);
+
+    useEffect(() => {
+        const getPlayer = async () => {
+            try {
+                const player_id = await axios.get(
+                    `${local_url}/player/get-player/${userId}/`
+                )
+
+                console.log(player_id.data)
+
+                if (player_id.data) {
+                    setUserName(player_id.data.name)
+                }
+            } catch (error) {
+                console.error("Error loading player name:", error)
+            }
+        }
+        getPlayer()
+    }, [userId])
 
     const shuffleArray = (array) => {
         const shuffledArray = [...array];
@@ -68,7 +89,7 @@ const Question = () => {
 
     const handleQuitGameClick = async () => {
         try {
-            const response = await axios.delete(`${api_url}/game/delete-game/`, {})
+            const response = await axios.delete(`${local_url}/game/delete-game/`, {})
 
             console.log(response.data)
         } catch (error) {
@@ -88,13 +109,33 @@ const Question = () => {
             setCountdown((prevCount) => prevCount - 1)
         }, 1000);
 
+        const isGameFinish = async () => {
+            try {
+                const response = await axios.get(
+                    `${local_url}/game/get-game/1/`
+                )
+
+                if (response.data) {
+                    const isAnsweredList = response.data.questions.map(question => question.is_answered);
+                    console.log(isAnsweredList)
+                    const allTrue = isAnsweredList.every(value => value === true);
+
+                    if (allTrue) {
+                        navigate("/score")
+                    }
+                }
+            } catch (error) {
+                console.error("Error loading question is answered name:", error)
+            }
+        }
+
         if (countdown === 0) {
             // Cache le timer
             setShowCountDown(false)
             // Mettre la question a is_answered = true
             const setQuestionAnswered = async () => {
                 const response = await axios.put(
-                    `${api_url}/game/set-question-answered/`
+                    `${local_url}/game/set-question-answered/`
                 );
                 console.log(response.data)
             }
@@ -106,24 +147,27 @@ const Question = () => {
                 // Augmenter le score du joueur
                 const increaseScore = async () => {
                     const response = await axios.put(
-                        `${api_url}/player/increase-score/${userId}/`
+                        `${local_url}/player/increase-score/${userId}/`
                     );
                     console.log(response.data)
                 }
                 increaseScore()
                 setTimeout(() => {
-                    // window.location.reload();
+                    isGameFinish()
+                    navigate('/category')
                 }, 5000)
             } if (userChoice == null) {
                 setAnswerClicked(true)
                 setNoAnswer(true)
                 setTimeout(() => {
-                    // window.location.reload();
+                    isGameFinish()
+                    navigate('/category')
                 }, 5000)
             } if (userChoice == false) {
                 setBadAnswer(true)
                 setTimeout(() => {
-                    // window.location.reload();
+                    isGameFinish()
+                    navigate('/category')
                 }, 5000)
             }
         }
@@ -156,15 +200,24 @@ const Question = () => {
             </Box>
             <Box sx={{
                 position: "absolute",
-                right: "0"
+                right: "0",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-end",
+                margin: "20px "
             }}>
+                <Typography sx={{
+                    fontFamily: "Archivo Black, sans-serif",
+                    fontSize: "2em",
+                    textTransform: "uppercase",
+                }}>
+                    {userName}
+                </Typography>
                 {showCountDown && (
                     <Typography sx={{
                         fontFamily: "Archivo Black, sans-serif",
-                        fontSize: "3em",
+                        fontSize: "2em",
                         textTransform: "uppercase",
-                        margin: "20px",
-                        padding: "10px",
                     }}>
                         {countdown} s
                     </Typography>

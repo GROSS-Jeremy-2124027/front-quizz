@@ -48,7 +48,12 @@ const Explaination = () => {
                 <Typography sx={{
                     margin: "20px 20vw"
                 }}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sit amet congue ipsum, interdum aliquet sapien. Etiam gravida congue velit, a auctor felis gravida eget. Aenean at augue ac nulla convallis pulvinar sed in metus. Pellentesque sodales molestie quam vehicula egestas. Nunc semper purus in convallis iaculis. Sed placerat dui vel arcu dapibus blandit. Pellentesque blandit rhoncus magna. Vestibulum lobortis tellus nisi. Sed commodo sem eget ex commodo, non lacinia magna varius. Sed a tempor massa, sit amet auctor sem. Suspendisse rhoncus, augue vel posuere gravida, nisl est semper tellus, vitae aliquam risus risus nec ante. Vivamus tincidunt egestas justo a rhoncus. Curabitur a convallis tellus. Vivamus ac sem nec orci dignissim mollis. Sed porttitor ut felis quis porttitor.
+                    Welcome to our exciting quiz game! To play, each player will have to answer thirty questions within a time limit.
+                    given for each puzzle.
+                    Additionally, to spice up the challenge even more, each player has two special jokers. These jokers can be used
+                    and double the points awarded to the next question. Choose wisely when to activate
+                    your joker to maximize your winnings. Let the competition begin, and let the best minds triumph in this game of
+                    captivating quiz!
                 </Typography>
                 <Box>
                     <Button label={"Start"} url={"category"} />

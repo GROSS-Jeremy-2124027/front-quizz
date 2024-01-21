@@ -1,40 +1,21 @@
 import { Box, Typography, Modal } from "@mui/material";
 import React, { useState, useEffect } from "react";
-import Joker from "../components/Joker";
-import { useSpring, animated } from 'react-spring'
-import { useNavigate } from "react-router-dom";
 import QuitButton from "../components/QuitButton";
+import { useSpring, animated } from 'react-spring'
 import Button from "../components/Button";
 import axios from 'axios';
 
-const Category = () => {
+const Score = () => {
     const local_url = "http://127.0.0.1:8000"
     const api_url = "https://web-production-1142.up.railway.app"
-    const navigate = useNavigate()
-    const [jokerClicked, setJokerClicked] = useState(false)
-    const [category, setCategory] = useState(null)
-    const [countdown, setCountdown] = useState(8)
+    const [playerId, setPlayerId] = useState(null)
     const [open, setOpen] = useState(false)
-    const [jokersAvailable, setJokersAvailable] = useState(0)
+    const [playerName, setPlayerName] = useState(null)
+    const [playerScore, setPlayerScore] = useState(null)
 
-    const handleJokerClick = async () => {
-        try {
-            const gameResponse = await axios.get(`${local_url}/game/get-game/1/`)
-            const playerId = gameResponse.data.player_id
+    const handleOpen = () => setOpen(true)
 
-            const jokersResponse = await axios.get(`${local_url}/player/get-player/${playerId}/`)
-            const availableJokers = jokersResponse.data.joker
-
-            if (availableJokers > 0) {
-                const jokerResponse = await axios.put(`${local_url}/player/use-joker/${playerId}/`)
-                console.log(jokerResponse.data)
-
-                setJokerClicked(true)
-            }
-        } catch (error) {
-            console.error('Error using joker:', error)
-        }
-    }
+    const handleClose = () => setOpen(false)
 
     const handleQuitGameClick = async () => {
         try {
@@ -47,55 +28,42 @@ const Category = () => {
     }
 
     useEffect(() => {
-        const timer = setInterval(() => {
-            setCountdown((prevCount) => prevCount - 1)
-        }, 1000)
-
-        if (countdown === 0) {
-            navigate('/question')
-        }
-
-        return () => clearInterval(timer)
-    }, [countdown])
-
-    useEffect(() => {
-        const loadCategory = async () => {
+        const getPlayerId = async () => {
             try {
-                const response = await axios.get(
-                    `${local_url}/game/first-unanswered-question/`
-                );
+                const player = await axios.get(
+                    `${local_url}/game/get-game/1/`
+                )
 
-                console.log(response.data)
-
-                if (response.data) {
-                    setCategory(response.data.category)
+                if (player.data.player_id) {
+                    setPlayerId(player.data.player_id)
                 } else {
-
+                    console.error("There is no player for this game")
                 }
             } catch (error) {
-                console.error("Error loading category:", error)
+                console.error("Error loading first unanswered question or player id:", error)
             }
-        };
-        loadCategory()
-    }, []);
+
+        }
+        getPlayerId()
+    }, [])
 
     useEffect(() => {
-        const fetchJokers = async () => {
+        const getPlayerNameScore = async () => {
             try {
-                const gameResponse = await axios.get(`${local_url}/game/get-game/1/`)
-                const playerId = gameResponse.data.player_id
+                const player_id = await axios.get(
+                    `${local_url}/player/get-player/${playerId}/`
+                )
 
-                const jokersResponse = await axios.get(`${local_url}/player/get-player/${playerId}/`)
-                const availableJokers = jokersResponse.data.joker
-
-                setJokersAvailable(availableJokers)
+                if (player_id.data) {
+                    setPlayerName(player_id.data.name)
+                    setPlayerScore(player_id.data.score)
+                }
             } catch (error) {
-                console.error('Error fetching available Jokers:', error)
+                console.error("Error loading player name:", error)
             }
         }
-
-        fetchJokers();
-    }, [])
+        getPlayerNameScore()
+    }, [playerId])
 
     const animation = useSpring({
         from: { y: 1000 },
@@ -103,10 +71,6 @@ const Category = () => {
         opacity: 1,
         config: { tension: 320, friction: 20 }
     })
-
-    const handleOpen = () => setOpen(true)
-
-    const handleClose = () => setOpen(false)
 
     return (
         <Box sx={{
@@ -127,20 +91,6 @@ const Category = () => {
             }}>
                 <QuitButton label={"Quit Game"} handleOpen={handleOpen} />
             </Box>
-            <Box sx={{
-                position: "absolute",
-                right: "0"
-            }}>
-                <Typography sx={{
-                    fontFamily: "Archivo Black, sans-serif",
-                    fontSize: "3em",
-                    textTransform: "uppercase",
-                    margin: "20px",
-                    padding: "10px",
-                }}>
-                    {countdown} s
-                </Typography>
-            </Box>
             <animated.div style={{
                 ...animation,
                 display: "flex",
@@ -155,7 +105,7 @@ const Category = () => {
                     fontSize: "5em",
                     textTransform: "uppercase",
                 }}>
-                    Category
+                    Score of {playerName}
                 </Typography>
                 <Typography sx={{
                     fontFamily: "Archivo Black, sans-serif",
@@ -165,14 +115,8 @@ const Category = () => {
                     borderRadius: "5px",
                     textTransform: "uppercase"
                 }}>
-                    {category}
+                    {playerScore}/30
                 </Typography>
-                <Box sx={{
-                    position: "relative",
-                    display: jokersAvailable > 0 ? 'block' : 'none',
-                }}>
-                    <Joker onJokerClick={handleJokerClick} />
-                </Box>
             </animated.div>
             <Modal
                 sx={{
@@ -211,4 +155,4 @@ const Category = () => {
     )
 }
 
-export default Category;
+export default Score;
