@@ -19,7 +19,7 @@ const Score = () => {
 
     const handleQuitGameClick = async () => {
         try {
-            const response = await axios.delete(`${local_url}/game/delete-game/`, {})
+            const response = await axios.delete(`${api_url}/game/delete-game/`, {})
 
             console.log(response.data)
         } catch (error) {
@@ -31,7 +31,7 @@ const Score = () => {
         const getPlayerId = async () => {
             try {
                 const player = await axios.get(
-                    `${local_url}/game/get-game/1/`
+                    `${api_url}/game/get-game/1/`
                 )
 
                 if (player.data.player_id) {
@@ -51,7 +51,7 @@ const Score = () => {
         const getPlayerNameScore = async () => {
             try {
                 const player_id = await axios.get(
-                    `${local_url}/player/get-player/${playerId}/`
+                    `${api_url}/player/get-player/${playerId}/`
                 )
 
                 if (player_id.data) {

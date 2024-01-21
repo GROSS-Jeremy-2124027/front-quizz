@@ -19,7 +19,7 @@ const Difficulty = () => {
 
     const handleGetStartedClick = async () => {
         try {
-            const response = await axios.put(`${local_url}/game/update-game/1/`, {
+            const response = await axios.put(`${api_url}/game/update-game/1/`, {
                 difficulty: selectedDifficulty
             });
 

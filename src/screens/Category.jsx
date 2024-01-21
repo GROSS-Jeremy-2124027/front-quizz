@@ -19,14 +19,14 @@ const Category = () => {
 
     const handleJokerClick = async () => {
         try {
-            const gameResponse = await axios.get(`${local_url}/game/get-game/1/`)
+            const gameResponse = await axios.get(`${api_url}/game/get-game/1/`)
             const playerId = gameResponse.data.player_id
 
-            const jokersResponse = await axios.get(`${local_url}/player/get-player/${playerId}/`)
+            const jokersResponse = await axios.get(`${api_url}/player/get-player/${playerId}/`)
             const availableJokers = jokersResponse.data.joker
 
             if (availableJokers > 0) {
-                const jokerResponse = await axios.put(`${local_url}/player/use-joker/${playerId}/`)
+                const jokerResponse = await axios.put(`${api_url}/player/use-joker/${playerId}/`)
                 console.log(jokerResponse.data)
 
                 setJokerClicked(true)
@@ -38,7 +38,7 @@ const Category = () => {
 
     const handleQuitGameClick = async () => {
         try {
-            const response = await axios.delete(`${local_url}/game/delete-game/`, {})
+            const response = await axios.delete(`${api_url}/game/delete-game/`, {})
 
             console.log(response.data)
         } catch (error) {
@@ -62,7 +62,7 @@ const Category = () => {
         const loadCategory = async () => {
             try {
                 const response = await axios.get(
-                    `${local_url}/game/first-unanswered-question/`
+                    `${api_url}/game/first-unanswered-question/`
                 );
 
                 console.log(response.data)
@@ -82,10 +82,10 @@ const Category = () => {
     useEffect(() => {
         const fetchJokers = async () => {
             try {
-                const gameResponse = await axios.get(`${local_url}/game/get-game/1/`)
+                const gameResponse = await axios.get(`${api_url}/game/get-game/1/`)
                 const playerId = gameResponse.data.player_id
 
-                const jokersResponse = await axios.get(`${local_url}/player/get-player/${playerId}/`)
+                const jokersResponse = await axios.get(`${api_url}/player/get-player/${playerId}/`)
                 const availableJokers = jokersResponse.data.joker
 
                 setJokersAvailable(availableJokers)

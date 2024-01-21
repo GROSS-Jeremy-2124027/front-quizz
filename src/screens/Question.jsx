@@ -31,11 +31,11 @@ const Question = () => {
         const loadFirstUnansweredQuestion = async () => {
             try {
                 const response = await axios.get(
-                    `${local_url}/game/first-unanswered-question/`
+                    `${api_url}/game/first-unanswered-question/`
                 );
 
                 const player = await axios.get(
-                    `${local_url}/game/get-game/1/`
+                    `${api_url}/game/get-game/1/`
                 )
 
                 console.log(response.data)
@@ -58,7 +58,7 @@ const Question = () => {
         const getPlayer = async () => {
             try {
                 const player_id = await axios.get(
-                    `${local_url}/player/get-player/${userId}/`
+                    `${api_url}/player/get-player/${userId}/`
                 )
 
                 console.log(player_id.data)
@@ -89,7 +89,7 @@ const Question = () => {
 
     const handleQuitGameClick = async () => {
         try {
-            const response = await axios.delete(`${local_url}/game/delete-game/`, {})
+            const response = await axios.delete(`${api_url}/game/delete-game/`, {})
 
             console.log(response.data)
         } catch (error) {
@@ -112,7 +112,7 @@ const Question = () => {
         const isGameFinish = async () => {
             try {
                 const response = await axios.get(
-                    `${local_url}/game/get-game/1/`
+                    `${api_url}/game/get-game/1/`
                 )
 
                 if (response.data) {
@@ -135,7 +135,7 @@ const Question = () => {
             // Mettre la question a is_answered = true
             const setQuestionAnswered = async () => {
                 const response = await axios.put(
-                    `${local_url}/game/set-question-answered/`
+                    `${api_url}/game/set-question-answered/`
                 );
                 console.log(response.data)
             }
@@ -147,7 +147,7 @@ const Question = () => {
                 // Augmenter le score du joueur
                 const increaseScore = async () => {
                     const response = await axios.put(
-                        `${local_url}/player/increase-score/${userId}/`
+                        `${api_url}/player/increase-score/${userId}/`
                     );
                     console.log(response.data)
                 }

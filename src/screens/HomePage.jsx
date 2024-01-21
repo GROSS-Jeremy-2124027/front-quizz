@@ -16,9 +16,9 @@ const HomePage = () => {
 
     const handleStartNowClick = async () => {
         try {
-            await axios.delete(`${local_url}/game/delete-game/`, {});
-            await axios.delete(`${local_url}/player/delete-all-players/`, {});
-            const response = await axios.post(`${local_url}/game/create-game/`, {});
+            await axios.delete(`${api_url}/game/delete-game/`, {});
+            await axios.delete(`${api_url}/player/delete-all-players/`, {});
+            const response = await axios.post(`${api_url}/game/create-game/`, {});
 
             console.log(response.data);
         } catch (error) {
