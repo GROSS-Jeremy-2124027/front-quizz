@@ -48,7 +48,7 @@ const Explaination = () => {
                 <Typography sx={{
                     margin: "20px 20vw"
                 }}>
-                    Welcome to our exciting quiz game! To play, each player will have to answer thirty questions within a time limit.
+                    Welcome to our exciting quiz game! To play, each player will have to answer ten questions within a time limit.
                     given for each puzzle.
                     Additionally, to spice up the challenge even more, each player has two special jokers. These jokers can be used
                     and double the points awarded to the next question. Choose wisely when to activate

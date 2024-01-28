@@ -115,7 +115,7 @@ const Score = () => {
                     borderRadius: "5px",
                     textTransform: "uppercase"
                 }}>
-                    {playerScore}/30
+                    {playerScore}/10
                 </Typography>
             </animated.div>
             <Modal
